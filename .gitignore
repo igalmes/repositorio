@@ -14,3 +14,8 @@ yarn-error.log*
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Carpetas y proyectos específicos a ignorar
+Desktop/
+portfolio-tailwind/
+Nueva carpeta \.vscode/

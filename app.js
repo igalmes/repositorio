@@ -1,9 +1,8 @@
-// server/app.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const path = require('path'); // ¡Necesitas importar 'path' para rutas absolutas!
-const sendMail = require('./sendmail');
+const path = require('path');
+const sendMail = require('./sendmail'); // Asegúrate de que sendmail.js está en el mismo directorio
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,19 +12,20 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// --- ¡NUEVO! Servir archivos estáticos desde la carpeta 'public' ---
-// Esto hace que todo lo que esté en 'public' sea accesible directamente.
-// Por ejemplo, si tienes 'public/index.html', se accederá vía http://localhost:3000/index.html
-// Si tienes 'public/css/style.css', se accederá vía http://localhost:3000/css/style.css
-app.use(express.static(path.join(__dirname, '../public'))); // Ajusta la ruta a tu carpeta 'public'
+// Servir archivos estáticos desde la carpeta 'public'
+const publicPath = path.join(__dirname, 'public');
+console.log('Express sirviendo archivos estáticos desde:', publicPath); // <-- Línea añadida para depuración
+app.use(express.static(publicPath));
 
-// --- ¡NUEVO! Ruta para servir tu index.html como la página principal ---
-// Cuando alguien acceda a http://localhost:3000/, se le enviará el index.html
+// La ruta principal '/' ha sido comentada, confiando en express.static para servir index.html
+/*
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'index.html'));
+    console.log('¡Request recibido para la ruta principal!');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+*/
 
-// Contact form submission endpoint
+// Endpoint para enviar correo
 app.post('/send-email', async (req, res) => {
     const { name, email, subject, message } = req.body;
 
@@ -42,8 +42,7 @@ app.post('/send-email', async (req, res) => {
     }
 });
 
-// Start the server
+// Iniciar el servidor
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
-    console.log('¡Listo para recibir tus mensajes!');
 });

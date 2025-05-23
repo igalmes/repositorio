@@ -28,8 +28,8 @@
                 <div
                     class="[&>p]:mb-4 [&>p>strong]:text-yellow-200  [&>p>strong]:font-medium  text-pretty order-2 md:order-1">
                     <p>
-                        Hola, soy Ignacio! <br>
-                        Mi interés por la computación comenzó en mis años de secundaria, explorando los sistemas
+                        ¡Hola! soy Ignacio Galmes. <br>
+                        Actualmente vivo en Barcelona, España aunque me formé profesionalmente y desarrollé mi experiencia laboral en Argentina. Mi interés por la computación comenzó en mis años de secundaria, explorando los sistemas
                         operativos de consolas, por curiosidad con amigos.
                         Hoy en día, <strong>soy Analista Funcional y Programador. Cuento con +5 años de
                             experiencia en desarrollo Full Stack.</strong>
@@ -43,8 +43,6 @@
                     class="w-52 order-1 object-cover p-1 md:order-2 rotate-6 lg:p-2 lg:w-64 rounded-full bg-yellow-500/5 ring-4 ring-white/20 ">
             </article>
         </section>
-
-        ---
 
         <section id="experience" data-aos="fade-right" class="py-2 mx-auto container lg:max-w-4xl md:max-w-2xl ">
             <h2 class="text-4xl font-bold text-left text-white mb-8">Experiencia Laboral</h2>
@@ -71,16 +69,16 @@
                         </time>
                         <p class="mb-4 text-base font-normal text-gray-300">
                             Relevamiento técnico y operativo en oficinas públicas para identificar requerimientos
-                            específicos de hardware según funciones, entorno y sistemas utilizados.
+                            específicos de hardware según funciones, entorno y sistemas utilizados.<br>
 
                             Aplicación de criterios de selección basados en compatibilidad tecnológica, eficiencia
-                            operativa, escalabilidad y cumplimiento de normas gubernamentales.
+                            operativa, escalabilidad y cumplimiento de normas gubernamentales.<br>
 
                             Elaboración de documentación técnica con especificaciones detalladas adaptadas a los
-                            hallazgos del relevamiento.
+                            hallazgos del relevamiento.<br>
 
                             Coordinación con personal técnico y administrativo para validar requerimientos antes del
-                            proceso licitatorio.
+                            proceso licitatorio.<br>
 
 
                         </p>
@@ -106,7 +104,7 @@
                         </time>
                         <p class="mb-4 text-base font-normal text-gray-300">
                             Coordinación de equipos multidisciplinarios de Soporte Técnico y Control de Calidad (QA)
-                            en el marco de proyectos del sistema de gestión documental electrónica (GDE).<br>
+                            en el marco de proyectos del sistema de gestión documental electrónica de la Administración Pública Nacional (GDE).<br>
 
                             Relevamiento de requerimientos y documentancion funcional mediante interacción con
                             usuarios finales y áreas técnicas del sistema GDE.<br>
@@ -192,8 +190,6 @@
                 </ol>
             </div>
         </section>
-
-        ---
 
         <section id="projects" data-aos="fade-down-right" class="py-20 mx-auto container lg:max-w-4xl md:max-w-2xl ">
             <h3 class="text-3xl font-bold text-left mb-8 text-white">Últimos Proyectos</h3>
@@ -308,12 +304,10 @@
             </div>
         </section>
 
-        ---
-
         <section id="contact" data-aos="fade-up" class="py-20 mx-auto container lg:max-w-4xl md:max-w-2xl">
             <h2 class="text-4xl font-bold text-left text-white mb-8">Contacto</h2>
             <div class="bg-slate-900 rounded-lg shadow-secondary-1 p-8">
-                <form action="http://localhost:3000/send-email" method="POST" class="space-y-6">
+                <form id="contactForm" action="http://localhost:3000/send-email" method="POST" class="space-y-6">
                     <div>
                         <label for="name" class="block text-sm font-medium text-white">Nombre Completo</label>
                         <input type="text" id="name" name="name" required
@@ -341,12 +335,11 @@
                         </button>
                     </div>
                 </form>
+                <div id="formMessage" class="mt-6 p-3 rounded-md text-center font-semibold"></div>
             </div>
         </section>
 
     </main>
-
-    ---
 
     <footer
         class="pl-8 md:pl-0 mt-16 mx-auto container lg:max-w-4xl md:max-w-2xl mb-10 flex justify-center">
@@ -363,6 +356,79 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
+
+        // INICIO DEL CÓDIGO JAVASCRIPT PARA EL FORMULARIO DE CONTACTO
+        document.addEventListener('DOMContentLoaded', () => {
+            const contactForm = document.getElementById('contactForm');
+            const formMessage = document.getElementById('formMessage'); // El div para mostrar mensajes
+
+            if (contactForm) {
+                contactForm.addEventListener('submit', async (event) => {
+                    event.preventDefault(); // Evita el envío tradicional del formulario (recarga de página)
+
+                    // Limpiar mensajes anteriores y resetear clases de estilo
+                    formMessage.textContent = '';
+                    // Reiniciar todas las clases de Tailwind a un estado base (o el que desees por defecto)
+                    formMessage.className = 'mt-6 p-3 rounded-md text-center font-semibold'; 
+
+                    // Mostrar un mensaje de "enviando..." con un estilo neutro
+                    formMessage.textContent = 'Enviando mensaje...';
+                    formMessage.classList.add('bg-gray-700', 'text-white'); // Clases de Tailwind para estado "enviando"
+
+                    const formData = new FormData(contactForm);
+                    const data = Object.fromEntries(formData.entries());
+
+                    try {
+                        const response = await fetch('/send-email', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        });
+
+                        const result = await response.json(); // Parsea la respuesta JSON del servidor
+
+                        if (result.success) {
+                            formMessage.textContent = result.message;
+                            // Eliminar clases de "enviando" y añadir clases de "éxito"
+                            formMessage.classList.remove('bg-gray-700', 'text-white'); 
+                            formMessage.classList.add('bg-green-100', 'text-green-800'); // Clases de Tailwind para éxito
+                            contactForm.reset(); // Limpia los campos del formulario
+
+                            // Desplazarse suavemente a la sección de contacto (donde está el mensaje)
+                            document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+
+                        } else {
+                            formMessage.textContent = result.message || 'Error al enviar el mensaje.';
+                            // Eliminar clases de "enviando" y añadir clases de "error"
+                            formMessage.classList.remove('bg-gray-700', 'text-white'); 
+                            formMessage.classList.add('bg-red-100', 'text-red-800'); // Clases de Tailwind para error
+                        }
+
+                        // El mensaje (éxito o error) desaparecerá después de 5 segundos
+                        setTimeout(() => {
+                            formMessage.textContent = '';
+                            formMessage.className = 'mt-6 p-3 rounded-md text-center font-semibold'; // Resetear a clases iniciales vacías
+                        }, 5000); 
+
+                    } catch (error) {
+                        console.error('Error de red o del servidor:', error);
+                        formMessage.textContent = 'Hubo un problema al conectar con el servidor. Por favor, inténtalo de nuevo.';
+                        // Eliminar clases de "enviando" y añadir clases de "error"
+                        formMessage.classList.remove('bg-gray-700', 'text-white'); 
+                        formMessage.classList.add('bg-red-100', 'text-red-800'); // Clases de Tailwind para error
+
+                        // El mensaje de error de conexión desaparecerá después de 5 segundos
+                        setTimeout(() => {
+                            formMessage.textContent = '';
+                            formMessage.className = 'mt-6 p-3 rounded-md text-center font-semibold'; // Resetear a clases iniciales vacías
+                        }, 5000);
+                    }
+                });
+            }
+        });
+        // FIN DEL CÓDIGO JAVASCRIPT PARA EL FORMULARIO DE CONTACTO
     </script>
 </body>
 
