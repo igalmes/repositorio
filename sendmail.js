@@ -1,25 +1,22 @@
 // server/sendmail.js
 const nodemailer = require('nodemailer');
 
-// Función asíncrona para enviar el correo electrónico
+
 const sendMail = async (name, senderEmail, subject, message) => {
-    // 1. Configura el transportador de Nodemailer
-    // Aquí usamos Gmail. Es crucial usar una "Contraseña de Aplicación" de Google
-    // si tienes la verificación en dos pasos activada en tu cuenta de Gmail,
-    // ya que es más seguro que usar tu contraseña principal.
+    
     const transporter = nodemailer.createTransport({
-        service: 'gmail', // Especificamos que usaremos el servicio de Gmail
+        service: 'gmail', // Especificamos Gmail
         auth: {
-            user: process.env.EMAIL_USER, // Tu dirección de Gmail desde el archivo .env
-            pass: process.env.EMAIL_PASS  // Tu Contraseña de Aplicación de Gmail desde el archivo .env
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS 
         }
     });
 
-    // 2. Define las opciones del correo electrónico
+    
     const mailOptions = {
-        from: `"${name}" <${senderEmail}>`, // El remitente que se mostrará (nombre y correo del que llenó el form)
-        to: process.env.RECEIVER_EMAIL,     // Tu correo personal (ignaciogalmes79@gmail.com) donde recibirás los mensajes
-        subject: `Mensaje de Contacto - ${subject}`, // El asunto del correo que recibirás
+        from: `"${name}" <${senderEmail}>`, 
+        to: process.env.RECEIVER_EMAIL,     
+        subject: `Mensaje de Contacto - ${subject}`, 
         html: `
             <p style="font-family: sans-serif; font-size: 14px; color: #333;">
                 <strong>De:</strong> ${name}
@@ -43,11 +40,9 @@ const sendMail = async (name, senderEmail, subject, message) => {
         `
     };
 
-    // 3. Envía el correo electrónico
-    // Si hay un error aquí (ej. credenciales incorrectas, problemas de conexión),
-    // la promesa será rechazada y el error será capturado en el try-catch de app.js.
+   
     await transporter.sendMail(mailOptions);
 };
 
-// Exporta la función para que pueda ser usada por app.js
+// Exporta función para app.js
 module.exports = sendMail;
