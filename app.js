@@ -2,28 +2,28 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const sendMail = require('./sendmail'); //llamamos a sendmail en subdirectorio.
+const sendMail = require('./sendmail'); // llamamos a sendmail en subdirectorio.
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ✅ CORS solo permite solicitudes desde igalmes.com
+const corsOptions = {
+    origin: 'https://igalmes.com',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+};
+
+app.use(cors(corsOptions));
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Servir archivos estáticos desde la carpeta 'public'
 const publicPath = path.join(__dirname, 'public');
-console.log('Express sirviendo archivos estáticos desde:', publicPath); // depuration points
+console.log('Express sirviendo archivos estáticos desde:', publicPath);
 app.use(express.static(publicPath));
-
-// La ruta principal '/' ha sido comentada, confiando en express.static para servir index.html
-/*
-app.get('/', (req, res) => {
-    console.log('¡Request recibido para la ruta principal!');
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-*/
 
 // Endpoint para enviar correo
 app.post('/send-email', async (req, res) => {
