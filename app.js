@@ -30,7 +30,7 @@ const corsOptions = {
 
 // ✅ Middleware de CORS
 app.use(cors(corsOptions));
-app.options('/*any', cors(corsOptions)); // Preflight - Named wildcard for Express 5.x
+
 
 // ✅ Middleware de parseo de cuerpo
 app.use(express.json());
