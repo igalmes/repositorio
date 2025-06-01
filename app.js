@@ -42,6 +42,8 @@ app.use(express.static(publicPath));
 
 // ✅ Endpoint de envío de correo
 app.post('/send-email', async (req, res) => {
+    console.log('Datos recibidos:', req.body);
+
     const { name, email, subject, message } = req.body;
 
     if (!name || !email || !subject || !message) {
