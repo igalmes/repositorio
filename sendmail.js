@@ -45,4 +45,4 @@ const sendMail = async (name, senderEmail, subject, message) => {
 };
 
 // Exporta función para app.js
-module.exports = sendMail;
+module.exports = sendMail;  
