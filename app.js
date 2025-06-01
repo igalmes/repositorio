@@ -2,47 +2,71 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const sendMail = require('./sendmail'); // llamamos a sendmail en subdirectorio.
+const sendMail = require('./sendmail');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ CORS solo permite solicitudes desde igalmes.com
+// ✅ Orígenes permitidos
+const allowedOrigins = [
+    'https://igalmes.com',         // Producción
+    'http://127.0.0.1:5500',       // Desarrollo local
+    'http://localhost:5500'        // Alternativa válida en local
+];
+
+// ✅ Configuración de CORS
 const corsOptions = {
-    origin: 'https://igalmes.com',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type'],
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.warn(`🚫 CORS bloqueado para origen no permitido: ${origin}`);
+            callback(new Error('No permitido por CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type']
 };
 
+// ✅ Middleware de CORS
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Preflight
 
-// Middleware
+// ✅ Middleware de parseo de cuerpo
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir archivos estáticos desde la carpeta 'public'
+// ✅ Archivos estáticos
 const publicPath = path.join(__dirname, 'public');
-console.log('Express sirviendo archivos estáticos desde:', publicPath);
 app.use(express.static(publicPath));
 
-// Endpoint para enviar correo
+// ✅ Endpoint de envío de correo
 app.post('/send-email', async (req, res) => {
     const { name, email, subject, message } = req.body;
 
     if (!name || !email || !subject || !message) {
-        return res.status(400).json({ success: false, message: 'Todos los campos son obligatorios.' });
+        return res.status(400).json({
+            success: false,
+            message: 'Todos los campos son obligatorios.'
+        });
     }
 
     try {
         await sendMail(name, email, subject, message);
-        res.status(200).json({ success: true, message: '¡Mensaje enviado con éxito!' });
+        res.status(200).json({
+            success: true,
+            message: '¡Mensaje enviado con éxito!'
+        });
     } catch (error) {
-        console.error('Error al enviar el correo:', error);
-        res.status(500).json({ success: false, message: 'Error al enviar el mensaje. Por favor, inténtalo de nuevo más tarde.' });
+        console.error('❌ Error al enviar el correo:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al enviar el mensaje.'
+        });
     }
 });
 
-// Iniciar el servidor
+// ✅ Iniciar servidor
 app.listen(PORT, () => {
-    console.log(`Servidor escuchando en http://localhost:${PORT}`);
+    console.log(`🚀 Servidor escuchando en http://localhost:${PORT}`);
 });
