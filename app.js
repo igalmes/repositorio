@@ -40,6 +40,10 @@ app.use(express.urlencoded({ extended: true }));
 const publicPath = path.join(__dirname, 'public');
 app.use(express.static(publicPath));
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // ✅ Endpoint de envío de correo
 app.post('/send-email', async (req, res) => {
     console.log('Datos recibidos:', req.body);
