@@ -9,10 +9,13 @@ const PORT = process.env.PORT || 3000;
 
 // ✅ Orígenes permitidos
 const allowedOrigins = [
-    'https://igalmes.com',         // Producción
+    'https://igalmes.com',         // Producción (dominio sin www)
+    'https://www.igalmes.com',     // Producción (dominio con www)
     'http://127.0.0.1:5500',       // Desarrollo local
     'http://localhost:5500'        // Alternativa válida en local
 ];
+
+
 
 // ✅ Configuración de CORS
 const corsOptions = {
