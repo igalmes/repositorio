@@ -2,15 +2,15 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const sendMail = require('./sendmail.js'); // Esto es correcto para importar tu función
+const sendMail = require('./sendmail.js'); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ Orígenes permitidos (¡Ya corregidos, excelente!)
+// ✅ Orígenes permitidos 
 const allowedOrigins = [
     'https://igalmes.com',
-    'https://www.igalmes.com', // ¡Asegúrate de que esta línea esté presente!
+    'https://www.igalmes.com', 
     'http://127.0.0.1:5500',
     'http://localhost:5500'
 ];
@@ -27,24 +27,23 @@ const corsOptions = {
     },
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
-    credentials: true // Añadir si en algún momento manejas cookies o headers de autorización
+    credentials: true 
 };
 
-// ✅ Middleware de CORS (Mantén esta línea)
+// ✅ Middleware de CORS 
 app.use(cors(corsOptions));
-// ✅ ¡IMPORTANTE! Elimina la siguiente línea si está presente:
-// app.options('*', cors(corsOptions)); // Esta línea DEBE ser eliminada.
 
 
-// ✅ Middleware de parseo de cuerpo (Mantén estos aquí, antes de las rutas)
+
+// ✅ Middleware de parseo de cuerpo
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-// ✅ Endpoint de envío de correo (¡Mueve esta sección AQUÍ, antes de los estáticos!)
-// ✅ ¡IMPORTANTE! Cambia './send-email' por '/send-email'
+// ✅ Endpoint de envío de correo 
+
 app.post('/send-email', async (req, res) => {
-    console.log('Datos recibidos en /send-email:', req.body); // Verás esto en los logs de Render
+    console.log('Datos recibidos en /send-email:', req.body); 
 
     const { name, email, subject, message } = req.body;
 
@@ -62,7 +61,7 @@ app.post('/send-email', async (req, res) => {
             message: '¡Mensaje enviado con éxito!'
         });
     } catch (error) {
-        console.error('❌ Error al enviar el correo (desde sendMail):', error); // Verás esto en los logs de Render si falla el envío
+        console.error('❌ Error al enviar el correo (desde sendMail):', error); 
         res.status(500).json({
             success: false,
             message: 'Error al enviar el mensaje.'
@@ -71,26 +70,20 @@ app.post('/send-email', async (req, res) => {
 });
 
 
-// ✅ Ruta para la página principal (si tu index.html es la raíz)
+// ✅ Ruta para la página principal
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// ✅ Archivos estáticos (Mueve esta sección ABAJO de tus rutas de API específicas)
+// ✅ Archivos estáticos 
 const publicPath = path.join(__dirname, 'public');
 app.use(express.static(publicPath));
 
 
-// ✅ Manejador de rutas no encontradas (opcional, para SPAs, si no tienes una ruta catch-all)
-// Si quieres que cualquier otra ruta devuelva tu index.html (útil para Single Page Applications)
-/*
-app.get('*', (req, res) => {
-    res.sendFile(path.join(publicPath, 'index.html'));
-});
-*/
 
 
-// ✅ Iniciar servidor (mantenlo al final)
+
+// ✅ Iniciar servidor 
 app.listen(PORT, () => {
     console.log(`🚀 Servidor escuchando en http://localhost:${PORT}`);
 });
